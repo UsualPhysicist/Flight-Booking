@@ -1,8 +1,21 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"], # Allows your React app to connect
+    allow_credentials=True,
+    allow_methods=["*"], # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"], # Allows all headers
+)
 
 
 def get_db_connection():
@@ -11,7 +24,7 @@ def get_db_connection():
             host="localhost",
             database="flight_db",
             user="postgres",
-            password="YOUR PASSWORD", 
+            password=os.getenv("db_password"), 
             port="5432"
         )
         return conn
